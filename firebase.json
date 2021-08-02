@@ -1,0 +1,20 @@
+{
+    "hosting": {
+        "public": "build",
+        "ignore": [
+            ".prettierrc",
+            ".gitignore",
+            ".travis.yml",
+            "firebase.json",
+            "package.json",
+            "package_lock.json",
+            "ftsconfig.json",
+            "README.md",
+            "firebase-debug.log",
+            "**/.*",
+            "**/functions/**",
+            "**/node_modules/**",
+            "**/src/**"
+        ]
+    }
+}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import Input from './Input';
+import Input from '.';
 
 const id = 'email-id';
 const newValue = 'test@test.test';

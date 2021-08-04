@@ -1,5 +1,7 @@
 import React from 'react';
 
+import classes from '../../helpers/classes';
+
 interface InputInterface {
     id?: string | undefined;
     name: string;
@@ -7,6 +9,7 @@ interface InputInterface {
     value: string;
     setValue: React.Dispatch<React.SetStateAction<string>>;
     placeholder?: string;
+    className?: string;
 }
 
 export default function Input({
@@ -16,6 +19,7 @@ export default function Input({
     value,
     setValue,
     placeholder = '',
+    className = '',
 }: InputInterface): React.ReactElement {
     const change = ({ currentTarget }: React.FormEvent<HTMLInputElement>) => {
         setValue(currentTarget.value);
@@ -23,9 +27,9 @@ export default function Input({
 
     return (
         <input
-            className="input"
-            {...{ id, name, type, value, placeholder }}
+            className={classes(['input', className])}
             onChange={change}
+            {...{ id, name, type, value, placeholder }}
         />
     );
 }

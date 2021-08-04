@@ -3,7 +3,8 @@ import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 
 import { auth } from '../../firebaseSetup';
 
-import Input from './Input';
+import Input from '../Input';
+import Button from '../Button';
 
 export default function SignIn(): React.ReactElement {
     const [email, setEmail] = useState<string>('');
@@ -14,11 +15,12 @@ export default function SignIn(): React.ReactElement {
     const submit = (e: React.SyntheticEvent) => {
         e.preventDefault();
 
+        // TODO: Can't perform a React state update on an unmounted component
         signInWithEmailAndPassword(email, password);
     };
 
     return (
-        <form onSubmit={submit}>
+        <form className="signin" onSubmit={submit}>
             <Input
                 name="email"
                 type="email"
@@ -33,6 +35,10 @@ export default function SignIn(): React.ReactElement {
                 setValue={setPassword}
                 placeholder="Your password"
             />
+
+            <Button type="submit">Sign in</Button>
+
+            {error && <p>{error?.message}</p>}
         </form>
     );
 }

@@ -2,9 +2,12 @@ import React from 'react';
 import firebase from 'firebase';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
-import { firestore } from '../../firebaseSetup';
+import { firestore, storage } from '../../firebaseSetup';
+
+import uploadFiles from '../../helpers/uploadFilest';
 
 import RoomFirestoreInterface from '../../interfaces/room';
+import SendMethodInterface from '../../interfaces/sendMethod';
 import MessageFirestoreInterface, {
     example as messageFirestoreExample,
 } from '../../interfaces/message';
@@ -25,6 +28,7 @@ export default function Room({
     // updated,
     quit,
 }: RoomInterface): React.ReactElement {
+    const storageRef = storage.ref(id);
     const messagesRef = firestore
         .collection('rooms')
         .doc(id)
@@ -35,11 +39,17 @@ export default function Room({
     );
 
     // TODO: handle attached files
-    const sendMethod = async (newMessage: string) => {
+    const sendMethod = async ({
+        newMessage,
+        newFiles,
+    }: SendMethodInterface) => {
+        const filesData = await uploadFiles(storageRef, newFiles);
+
         const messageObject: MessageFirestoreInterface = {
             ...messageFirestoreExample,
             createdBy: uid,
             body: newMessage,
+            files: filesData,
         };
 
         await messagesRef.add(messageObject);
@@ -54,9 +64,13 @@ export default function Room({
 
             <main className="room__body">
                 <ul className="room__messages">
-                    {messages?.map(({ body, createdBy }, index) => {
+                    {messages?.map(({ createdBy, files, body }, index) => {
                         return (
-                            <Message key={index} own={createdBy === uid}>
+                            <Message
+                                key={index}
+                                own={createdBy === uid}
+                                files={files}
+                            >
                                 {body}
                             </Message>
                         );

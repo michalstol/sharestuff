@@ -1,12 +1,12 @@
 import firebase from 'firebase';
 
-import FileInterface from './file';
+import FileFirestoreInterface from './file';
 
 export default interface MessageFirestoreInterface {
     createdBy: string;
     createdAt: firebase.firestore.Timestamp | firebase.firestore.FieldValue;
     body: string;
-    files: FileInterface[];
+    files: FileFirestoreInterface[];
 }
 
 export const example: MessageFirestoreInterface = {

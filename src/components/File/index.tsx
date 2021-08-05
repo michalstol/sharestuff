@@ -21,7 +21,7 @@ export default function File({
             className={classes([
                 'file',
                 !!contentType
-                    ? `file--${contentType.replaceAll('/', '-')}`
+                    ? `file--${contentType.replace('/', '-')}`
                     : '',
             ])}
         >

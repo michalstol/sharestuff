@@ -12,7 +12,7 @@ interface InputInterface
 }
 
 function Input(
-    { className = '', setValue, setFiles, ...props }: InputInterface,
+    { className = '', name, setValue, setFiles, ...props }: InputInterface,
     ref: React.LegacyRef<HTMLInputElement>
 ): React.ReactElement {
     const change = ({
@@ -26,7 +26,8 @@ function Input(
         <input
             className={classes(['input', className])}
             onChange={change}
-            {...{ ref, ...props }}
+            data-testid={`input-test-${name}`}
+            {...{ ref, name, ...props }}
         />
     );
 }

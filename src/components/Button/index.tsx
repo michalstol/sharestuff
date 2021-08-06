@@ -8,6 +8,7 @@ interface ButtonInterface
     > {}
 
 export default function Button({
+    type = 'button',
     onClick,
     children,
     className = '',
@@ -16,7 +17,8 @@ export default function Button({
     return (
         <button
             className={classes(['button', className])}
-            {...{ onClick, ...props }}
+            data-testid={`button-test-${type}`}
+            {...{ type, onClick, ...props }}
         >
             {children}
         </button>

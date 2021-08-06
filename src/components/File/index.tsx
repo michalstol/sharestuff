@@ -24,6 +24,7 @@ export default function File({
                     ? `file--${contentType.replace('/', '-')}`
                     : '',
             ])}
+            data-testid={`file-test-${name.replace(/\s/g, '-')}`}
         >
             {!!contentType &&
                 imageTypes.indexOf(contentType) !== -1 &&

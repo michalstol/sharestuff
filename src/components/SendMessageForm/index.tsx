@@ -25,10 +25,6 @@ export default function SendMessageForm({
         setMessage('');
     };
 
-    useEffect(() => {
-        console.log({ newFiles });
-    }, [newFiles]);
-
     return (
         <form className="send-message" onSubmit={submit}>
             <Input

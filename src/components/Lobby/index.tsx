@@ -8,6 +8,8 @@ import RoomFirestoreInterface, {
     example as roomFirestoreExample,
 } from '../../interfaces/room';
 
+import LobbyRecord from './../LobbyRecord';
+
 interface LobbyInterface {
     user: firebase.User;
     setRoom: React.Dispatch<
@@ -19,24 +21,24 @@ export default function Lobby({
     user,
     setRoom,
 }: LobbyInterface): React.ReactElement {
+    const {uid: userUid} = user;
     // const [docs, loading, error] = useCollectionDataOnce(
-    const [docs] = useCollectionDataOnce(
+    const [docs] = useCollectionDataOnce<RoomFirestoreInterface>(
         firestore
             .collection('rooms')
-            .where('usersUids', 'array-contains', user.uid),
+            .where('usersUids', 'array-contains', userUid),
         { idField: 'id' }
     );
 
     return (
         <ul className="lobby">
             {docs?.map((doc, i) => (
-                <li
-                    className="lobby__record"
+                <LobbyRecord
                     key={i}
                     onClick={() => setRoom({ ...roomFirestoreExample, ...doc })}
                 >
-                    {JSON.stringify(doc.users.map(({ name = '' }) => name))}
-                </li>
+                    {doc.users.find(({uid}) => uid !== userUid)?.name || ''}
+                </LobbyRecord>
             ))}
         </ul>
     );

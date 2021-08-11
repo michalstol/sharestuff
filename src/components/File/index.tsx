@@ -5,7 +5,7 @@ import { storage } from '../../firebaseSetup';
 import classes from '../../helpers/classes';
 import FileFirestoreInterface from '../../interfaces/file';
 
-const imageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+import Image from '../Image';
 
 export default function File({
     name,
@@ -24,8 +24,10 @@ export default function File({
             data-testid={`file-test-${name.replace(/\s/g, '-')}`}
         >
             {!!contentType &&
-                imageTypes.indexOf(contentType) !== -1 &&
-                downloadUrl && <img src={downloadUrl} alt={name} width="200" />}
+                contentType.indexOf('image') !== -1 &&
+                downloadUrl && (
+                    <Image src={downloadUrl} alt={name} width="200" />
+                )}
         </li>
     );
 }

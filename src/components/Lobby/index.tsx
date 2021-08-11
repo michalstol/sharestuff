@@ -1,45 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import firebase from 'firebase';
-import { useCollectionDataOnce } from 'react-firebase-hooks/firestore';
 
 import { firestore } from '../../firebaseSetup';
 
-import RoomFirestoreInterface, {
-    example as roomFirestoreExample,
-} from '../../interfaces/room';
-
-import LobbyRecord from './../LobbyRecord';
+import Input from '../Input';
 
 interface LobbyInterface {
-    user: firebase.User;
-    setRoom: React.Dispatch<
-        React.SetStateAction<RoomFirestoreInterface | undefined>
-    >;
+    userUid: string;
+    children?: React.ReactNode;
 }
 
 export default function Lobby({
-    user,
-    setRoom,
+    userUid,
+    children,
 }: LobbyInterface): React.ReactElement {
-    const {uid: userUid} = user;
-    // const [docs, loading, error] = useCollectionDataOnce(
-    const [docs] = useCollectionDataOnce<RoomFirestoreInterface>(
-        firestore
-            .collection('rooms')
-            .where('usersUids', 'array-contains', userUid),
-        { idField: 'id' }
-    );
+    const [newUserUid, setNewUserUid] = useState<string>('');
+
+    const submit = (e: React.SyntheticEvent) => {
+        e.preventDefault();
+
+        if (!newUserUid) return;
+
+        firestore.collection('rooms').add({
+            updated: firebase.firestore.FieldValue.serverTimestamp(),
+            usersUids: [userUid, newUserUid],
+            users: [],
+        });
+
+        setNewUserUid('');
+    };
 
     return (
-        <ul className="lobby">
-            {docs?.map((doc, i) => (
-                <LobbyRecord
-                    key={i}
-                    onClick={() => setRoom({ ...roomFirestoreExample, ...doc })}
-                >
-                    {doc.users.find(({uid}) => uid !== userUid)?.name || ''}
-                </LobbyRecord>
-            ))}
-        </ul>
+        <div className="lobby" data-testid="lobby-test">
+            <ul className="lobby__list">{children}</ul>
+            <hr />
+
+            <form className="lobby__form" onSubmit={submit}>
+                <Input
+                    type="text"
+                    value={newUserUid}
+                    setValue={setNewUserUid}
+                />
+            </form>
+        </div>
     );
 }

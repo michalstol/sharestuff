@@ -1,39 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { auth } from './firebaseSetup';
 
-import RoomFirestoreInterface from './interfaces/room';
-
 import SignIn from './components/SignIn';
-import Lobby from './components/Lobby';
-import Room from './components/Room';
+import Main from './components/Main';
 
 function App() {
-    const [user] = useAuthState(auth);
-    const [selectedRoom, setSelectedRoom] = useState<
-        RoomFirestoreInterface | undefined
-    >(undefined);
+    const [user, loading] = useAuthState(auth);
+
+    if (!!loading) return <>connecting</>;
 
     return (
         <div className="">
             {!user && <SignIn />}
-            {user && (
-                <>
-                    {!selectedRoom && (
-                        <Lobby user={user} setRoom={setSelectedRoom} />
-                    )}
-                    {selectedRoom && (
-                        <Room
-                            {...selectedRoom}
-                            user={user}
-                            quit={() => {
-                                setSelectedRoom(undefined);
-                            }}
-                        />
-                    )}
-                </>
-            )}
+            {user && <Main userUid={user?.uid} />}
         </div>
     );
 }

@@ -9,8 +9,7 @@ import Button from '../Button';
 export default function SignIn(): React.ReactElement {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    // const [signInWithEmailAndPassword, user, loading, error] =
-    const [signInWithEmailAndPassword, error] =
+    const [signInWithEmailAndPassword, user, loading, error] =
         useSignInWithEmailAndPassword(auth);
 
     const submit = (e: React.SyntheticEvent) => {

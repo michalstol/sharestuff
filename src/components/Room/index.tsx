@@ -8,34 +8,31 @@ import uploadFiles from '../../helpers/uploadFilest';
 
 import RoomFirestoreInterface from '../../interfaces/room';
 import SendMethodInterface from '../../interfaces/sendMethod';
-import MessageFirestoreInterface, {
-    example as messageFirestoreExample,
-} from '../../interfaces/message';
+import MessageFirestoreInterface from '../../interfaces/message';
 
 import Button from '../Button';
 import SendMessageForm from '../SendMessageForm';
 import Message from '../Message';
 
 interface RoomInterface extends RoomFirestoreInterface {
-    user: firebase.User;
+    userUid: string;
     quit: () => void;
 }
 
 export default function Room({
     id,
-    user: { uid },
+    userUid,
     // users,
     // updated,
     quit,
 }: RoomInterface): React.ReactElement {
     const storageRef = storage.ref(id);
-    const messagesRef = firestore
-        .collection('rooms')
-        .doc(id)
-        .collection('messages');
+    const docRef = firestore.collection('rooms').doc(id);
+    const messagesRef = docRef.collection('messages');
     // const [messages, loading, error] = useCollectionData(
     const [messages] = useCollectionData(
-        messagesRef.orderBy('createdAt').limit(10)
+        // messagesRef.orderBy('createdAt', 'asc').limit(10)
+        messagesRef.orderBy('createdAt', 'asc')
     );
 
     // TODO: handle attached files
@@ -46,12 +43,18 @@ export default function Room({
         const filesData = await uploadFiles(storageRef, newFiles);
 
         const messageObject: MessageFirestoreInterface = {
-            ...messageFirestoreExample,
-            createdBy: uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            createdBy: userUid,
             body: newMessage,
             files: filesData,
         };
 
+        // set an updated field of document
+        docRef.update({
+            updated: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+
+        // create a new message
         await messagesRef.add(messageObject);
     };
 
@@ -68,7 +71,7 @@ export default function Room({
                         return (
                             <Message
                                 key={index}
-                                own={createdBy === uid}
+                                own={createdBy === userUid}
                                 files={files}
                             >
                                 {body}

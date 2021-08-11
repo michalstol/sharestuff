@@ -1,5 +1,4 @@
 import React from 'react';
-import firebase from 'firebase';
 import { useDownloadURL } from 'react-firebase-hooks/storage';
 
 import { storage } from '../../firebaseSetup';
@@ -20,9 +19,7 @@ export default function File({
         <li
             className={classes([
                 'file',
-                !!contentType
-                    ? `file--${contentType.replace('/', '-')}`
-                    : '',
+                !!contentType ? `file--${contentType.replace('/', '-')}` : '',
             ])}
             data-testid={`file-test-${name.replace(/\s/g, '-')}`}
         >
